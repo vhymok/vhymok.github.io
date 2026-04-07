@@ -1,56 +1,978 @@
-<!-- 
-Online HTML, CSS and JavaScript editor to run code online.
--->
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
-    <title>Browser</title>
-    <link href='https://fonts.googleapis.com/css?family=Alegreya' rel='stylesheet'>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Veronica Mok — Electrical Engineer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400;500&family=Cormorant+Garamond:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --espresso:   #1e1209;
+      --bark:       #3b2314;
+      --terracotta: #b5613a;
+      --clay:       #c8835b;
+      --sand:       #e8d5b7;
+      --parchment:  #f5ede0;
+      --sage:       #7a8c6e;
+      --moss:       #4f5e45;
+      --cream:      #faf6ef;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--espresso);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 18px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE TEXTURE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.5;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 3rem;
+      background: rgba(250,246,239,0.88);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(181,97,58,0.15);
+    }
+
+    nav .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.04em;
+      color: var(--bark);
+      text-decoration: none;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2.5rem;
+    }
+
+    nav ul a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--bark);
+      text-decoration: none;
+      opacity: 0.75;
+      transition: opacity 0.2s, color 0.2s;
+    }
+
+    nav ul a:hover { opacity: 1; color: var(--terracotta); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      overflow: hidden;
+    }
+
+    .hero-left {
+      background: var(--bark);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 5rem 4rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-left::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 320px; height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(181,97,58,0.35), transparent 70%);
+    }
+
+    .hero-left::after {
+      content: '';
+      position: absolute;
+      bottom: 80px; left: -40px;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(122,140,110,0.2), transparent 70%);
+    }
+
+    .hero-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--clay);
+      margin-bottom: 1.2rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.2s forwards;
+    }
+
+    .hero-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 5vw, 5.5rem);
+      font-weight: 700;
+      color: var(--parchment);
+      line-height: 1.0;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.4s forwards;
+    }
+
+    .hero-name em {
+      display: block;
+      font-style: italic;
+      font-weight: 400;
+      color: var(--clay);
+    }
+
+    .hero-desc {
+      font-size: 1.05rem;
+      color: var(--sand);
+      opacity: 0;
+      max-width: 360px;
+      animation: fadeUp 0.8s 0.6s forwards;
+      font-weight: 300;
+    }
+
+    .hero-links {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.8s forwards;
+    }
+
+    .hero-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--sand);
+      text-decoration: none;
+      border: 1px solid rgba(232,213,183,0.3);
+      padding: 0.5rem 1.2rem;
+      border-radius: 2px;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+
+    .hero-links a:hover {
+      background: var(--terracotta);
+      border-color: var(--terracotta);
+      color: var(--cream);
+    }
+
+    .hero-right {
+      background: var(--parchment);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6rem 4rem;
+      position: relative;
+    }
+
+    .hero-right::before {
+      content: '';
+      position: absolute;
+      inset: 40px;
+      border: 1px solid rgba(181,97,58,0.15);
+      border-radius: 2px;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stat-item {
+      text-align: center;
+      opacity: 0;
+      animation: fadeUp 0.8s forwards;
+    }
+    .stat-item:nth-child(1) { animation-delay: 0.5s; }
+    .stat-item:nth-child(2) { animation-delay: 0.7s; }
+    .stat-item:nth-child(3) { animation-delay: 0.9s; }
+    .stat-item:nth-child(4) { animation-delay: 1.1s; }
+
+    .stat-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: var(--terracotta);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--moss);
+      margin-top: 0.4rem;
+    }
+
+    /* ── SECTION COMMONS ── */
+    section { padding: 6rem 3rem; }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1.5rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .section-number {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--terracotta);
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 3vw, 3rem);
+      color: var(--bark);
+      font-weight: 700;
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, rgba(181,97,58,0.4), transparent);
+    }
+
+    /* ── ABOUT ── */
+    #about {
+      background: var(--espresso);
+      color: var(--parchment);
+    }
+
+    #about .section-title { color: var(--sand); }
+    #about .section-line { background: linear-gradient(to right, rgba(232,213,183,0.3), transparent); }
+    #about .section-number { color: var(--clay); }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .about-text p {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--sand);
+      margin-bottom: 1.2rem;
+    }
+
+    .about-text strong { color: var(--clay); font-weight: 600; }
+
+    .edu-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(232,213,183,0.12);
+      border-radius: 4px;
+      padding: 1.8rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .edu-card .school {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      color: var(--clay);
+      margin-bottom: 0.3rem;
+    }
+
+    .edu-card .degree {
+      font-size: 0.95rem;
+      color: var(--sand);
+      font-weight: 300;
+    }
+
+    .edu-card .meta {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.63rem;
+      letter-spacing: 0.1em;
+      color: rgba(232,213,183,0.4);
+      margin-top: 0.5rem;
+    }
+
+    /* ── EXPERIENCE ── */
+    #experience { background: var(--cream); }
+
+    .timeline {
+      position: relative;
+      padding-left: 2.5rem;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 8px; bottom: 8px;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--terracotta), var(--sage), transparent);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 3rem;
+      opacity: 0;
+      transform: translateX(-12px);
+      transition: opacity 0.6s, transform 0.6s;
+    }
+
+    .timeline-item.visible { opacity: 1; transform: translateX(0); }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -2.5rem;
+      top: 8px;
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      background: var(--terracotta);
+      border: 2px solid var(--cream);
+      box-shadow: 0 0 0 3px rgba(181,97,58,0.2);
+    }
+
+    .job-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .job-company {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      color: var(--bark);
+      font-weight: 700;
+    }
+
+    .job-date {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.63rem;
+      letter-spacing: 0.1em;
+      color: var(--terracotta);
+      white-space: nowrap;
+    }
+
+    .job-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--sage);
+      margin-bottom: 0.8rem;
+    }
+
+    .job-bullets {
+      list-style: none;
+      padding: 0;
+    }
+
+    .job-bullets li {
+      font-size: 0.95rem;
+      color: #3b2314cc;
+      padding-left: 1.2rem;
+      position: relative;
+      margin-bottom: 0.4rem;
+      font-weight: 300;
+    }
+
+    .job-bullets li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--clay);
+    }
+
+    /* ── PROJECTS / PUBLICATIONS ── */
+    #publications { background: var(--parchment); }
+
+    .pub-card {
+      background: var(--cream);
+      border-left: 3px solid var(--terracotta);
+      padding: 1.8rem 2rem;
+      margin-bottom: 1.5rem;
+      border-radius: 0 4px 4px 0;
+      box-shadow: 0 2px 12px rgba(30,18,9,0.06);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .pub-card:hover {
+      transform: translateX(4px);
+      box-shadow: 0 4px 20px rgba(30,18,9,0.1);
+    }
+
+    .pub-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      color: var(--bark);
+      margin-bottom: 0.4rem;
+    }
+
+    .pub-meta {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.63rem;
+      letter-spacing: 0.08em;
+      color: var(--sage);
+      margin-bottom: 0.5rem;
+    }
+
+    .pub-award {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: var(--terracotta);
+      color: white;
+      padding: 0.2rem 0.7rem;
+      border-radius: 2px;
+    }
+
+    /* ── AWARDS ── */
+    #awards { background: var(--bark); }
+    #awards .section-title { color: var(--sand); }
+    #awards .section-number { color: var(--clay); }
+    #awards .section-line { background: linear-gradient(to right, rgba(232,213,183,0.25), transparent); }
+
+    .awards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .award-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(232,213,183,0.1);
+      border-radius: 4px;
+      padding: 1.8rem;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .award-card:hover {
+      background: rgba(181,97,58,0.12);
+      border-color: rgba(181,97,58,0.4);
+    }
+
+    .award-year {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: var(--clay);
+      margin-bottom: 0.5rem;
+    }
+
+    .award-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      color: var(--sand);
+      margin-bottom: 0.6rem;
+      line-height: 1.4;
+    }
+
+    .award-desc {
+      font-size: 0.85rem;
+      color: rgba(232,213,183,0.55);
+      font-weight: 300;
+    }
+
+    /* ── SKILLS ── */
+    #skills { background: var(--cream); }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 2rem;
+    }
+
+    .skill-group h3 {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--terracotta);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(181,97,58,0.2);
+    }
+
+    .skill-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .skill-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.06em;
+      background: var(--parchment);
+      color: var(--bark);
+      border: 1px solid rgba(59,35,20,0.15);
+      padding: 0.3rem 0.75rem;
+      border-radius: 2px;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .skill-tag:hover {
+      background: var(--terracotta);
+      color: white;
+      border-color: var(--terracotta);
+    }
+
+    /* ── CONTACT FOOTER ── */
+    footer {
+      background: var(--espresso);
+      color: var(--parchment);
+      padding: 4rem 3rem;
+      text-align: center;
+    }
+
+    footer .footer-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--sand);
+      margin-bottom: 0.5rem;
+    }
+
+    footer .footer-sub {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--clay);
+      margin-bottom: 2rem;
+    }
+
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .contact-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      color: var(--sand);
+      text-decoration: none;
+      opacity: 0.7;
+      transition: opacity 0.2s, color 0.2s;
+    }
+
+    .contact-links a:hover { opacity: 1; color: var(--clay); }
+
+    footer .footer-copy {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.12em;
+      color: rgba(232,213,183,0.25);
+      margin-top: 2.5rem;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      #hero { grid-template-columns: 1fr; }
+      .hero-right { min-height: 320px; }
+      .about-grid { grid-template-columns: 1fr; }
+      nav { padding: 1rem 1.5rem; }
+      nav ul { gap: 1.2rem; }
+      section { padding: 4rem 1.5rem; }
+    }
+
+    @media (max-width: 600px) {
+      nav ul { display: none; }
+    }
+  </style>
 </head>
+<body>
 
-<div class="topnav">
-    <a href="#contact">Get In Touch</a>
-    <a href="#projects">Projects</a>
-    <a href="#about">About Me</a>
-    <a class="active" href="#home">Home</a>
-</div>
+  <!-- NAV -->
+  <nav>
+    <a class="logo" href="#hero">VM</a>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#publications">Research</a></li>
+      <li><a href="#awards">Awards</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
 
-<div class="body">
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-left">
+      <div class="hero-tag">Electrical Engineer · Researcher · Builder</div>
+      <h1 class="hero-name">
+        Veronica<em>Mok</em>
+      </h1>
+      <p class="hero-desc">
+        Georgia Tech EE student designing RF systems, rocket avionics, and biomedical devices. 
+        Incoming RF Design Engineering Intern at Boeing.
+      </p>
+      <div class="hero-links">
+        <a href="mailto:vhymok@gmail.com">Email</a>
+        <a href="http://linkedin.com/in/mok-veronica" target="_blank">LinkedIn</a>
+        <a href="https://ieeexplore.ieee.org/document/11121626" target="_blank">Publication</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="stat-grid">
+        <div class="stat-item">
+          <div class="stat-number">3.47</div>
+          <div class="stat-label">GPA</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">10</div>
+          <div class="stat-label">Rocket Hotfires</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">60+</div>
+          <div class="stat-label">Peers Trained</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">2nd</div>
+          <div class="stat-label">IEEE ORSS Award</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <div class="left-section">
-        <style>
-            img {
-                width: 100%;
-            }
-        </style>
-        <img src="headshot.jpeg">
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-header">
+      <span class="section-number">01</span>
+      <h2 class="section-title">About</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>
+          I'm a <strong>3rd-year Electrical Engineering student</strong> at Georgia Tech with a passion for bridging hardware and cutting-edge research. From simulating RF energy harvesters to wiring liquid rocket engines for hotfires, I thrive at the intersection of precision engineering and hands-on building.
+        </p>
+        <p>
+          Currently conducting <strong>undergraduate research</strong> at the Housley Cancer Neurobiology &amp; Nanotechnology Lab, developing microfabrication methods and wireless power transfer systems for biomedical devices — while also serving as a Teaching Assistant for Digital Design Lab.
+        </p>
+        <p>
+          My work has been <strong>published at IEEE ORSS 2025</strong> and recognized across national competitions. I'm dedicated to making engineering more accessible, particularly for women and underrepresented communities in STEM.
+        </p>
+        <p style="margin-top: 1.5rem; font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.12em; color: rgba(232,213,183,0.45);">
+          Fort Lee, NJ · Atlanta, GA · US Citizen
+        </p>
+      </div>
+      <div>
+        <div class="edu-card">
+          <div class="school">Georgia Institute of Technology</div>
+          <div class="degree">B.S. Electrical Engineering</div>
+          <div class="meta">Atlanta, GA · Aug 2023 – May 2027 (Expected)</div>
+        </div>
+        <div class="edu-card">
+          <div class="school">Georgia Tech Shenzhen Institute</div>
+          <div class="degree">Study Abroad</div>
+          <div class="meta">Shenzhen, Guangdong, China · Summer 2024</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <div class="section-header">
+      <span class="section-number">02</span>
+      <h2 class="section-title">Experience</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="timeline">
+
+      <div class="timeline-item">
+        <div class="job-header">
+          <div class="job-company">Boeing</div>
+          <div class="job-date">May 2026 – Aug 2026</div>
+        </div>
+        <div class="job-title">Incoming RF Design Engineering Intern · Seattle, WA</div>
+        <ul class="job-bullets">
+          <li>Incoming role focused on RF design and systems engineering.</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="job-header">
+          <div class="job-company">Housley Lab — Cancer Neurobiology &amp; Nanotechnology</div>
+          <div class="job-date">Aug 2025 – Present</div>
+        </div>
+        <div class="job-title">Undergraduate Research Assistant · Atlanta, GA</div>
+        <ul class="job-bullets">
+          <li>Developing scalable 2.5D microfabrication methods for complex vascular-on-chip models.</li>
+          <li>Designing wireless power transfer systems for optogenetic applications in cell culture and implantable devices.</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="job-header">
+          <div class="job-company">Northrop Grumman</div>
+          <div class="job-date">May 2025 – Aug 2025</div>
+        </div>
+        <div class="job-title">Electrical Engineering Intern · Rocket Center, WV</div>
+        <ul class="job-bullets">
+          <li>Simulated ringdowns of a brass board within a thermal chamber using Automatic Test Equipment, analyzing and presenting test data in a team setting.</li>
+          <li>Used Siemens EDA to design a test box PCB analyzing pressure decay and integrate with rocket motor components.</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="job-header">
+          <div class="job-company">ECE 2031 — Digital Design Lab, Georgia Tech</div>
+          <div class="job-date">Jan 2025 – Present</div>
+        </div>
+        <div class="job-title">Undergraduate Teaching Assistant · Atlanta, GA</div>
+        <ul class="job-bullets">
+          <li>Assisted 120+ students with lab checkoffs and troubleshooting in breadboard prototyping and FPGA design.</li>
+          <li>Supported use of Intel Quartus for logic synthesis, VHDL, and Assembly programming.</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="job-header">
+          <div class="job-company">The Propagation Group</div>
+          <div class="job-date">Aug 2024 – May 2025</div>
+        </div>
+        <div class="job-title">Opportunity Research Scholar · Atlanta, GA</div>
+        <ul class="job-bullets">
+          <li>Used Keysight ADS to design an RF energy harvester and impedance matching network for a Reconfigurable Antenna Array crown utilizing RFID-inspired tag antennas.</li>
+          <li>Developed a low-power, cost-effective solution for omnidirectional antennas to increase diversity and mitigate small-scale fading.</li>
+          <li>Presented at IEEE ORSS 2025 and published peer-reviewed research.</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="job-header">
+          <div class="job-company">The Hive ECE Makerspace</div>
+          <div class="job-date">Jan 2024 – Present</div>
+        </div>
+        <div class="job-title">Director of Operations &amp; Master Peer Instructor · Atlanta, GA</div>
+        <ul class="job-bullets">
+          <li>Responsible for hiring, training, and onboarding 60+ Peer Instructors in benchtop electronics equipment.</li>
+          <li>Executed workshops to increase student engagement and streamlined logistics for the hiring process.</li>
+          <li>Assisted end users in benchtop electronics, circuit prototyping, laser cutting, and 3D printing.</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="job-header">
+          <div class="job-company">Yellow Jacket Space Program</div>
+          <div class="job-date">Aug 2023 – Dec 2024</div>
+        </div>
+        <div class="job-title">Engine Test Stand Avionics Lead &amp; Ground Computer RE · Georgia Tech</div>
+        <ul class="job-bullets">
+          <li>Led electronics development of the Helluva Engine Test Stand (HETS), achieving 10 hotfires in 1 month with precise sensor data from thermocouples, load cells, and pressure transducers.</li>
+          <li>Co-designed and tested the System Avionics Module, Thermocouple Module, and Ground Computer.</li>
+          <li>Part of a team developing a kerosene/LOX rocket to be the first collegiate liquid rocket to reach the edge of space.</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PUBLICATIONS / RESEARCH -->
+  <section id="publications">
+    <div class="section-header">
+      <span class="section-number">03</span>
+      <h2 class="section-title">Research &amp; Publications</h2>
+      <div class="section-line"></div>
     </div>
 
-
-    <div class="right-section">
-        <h1>Veronica Mok</h1>
-        <h2>Electrical Engineering @ Georgia Tech | Prev. Intern @ Northrop Grumman</h2>
-        <p>I am a third year undergraduate student concentrating in circuit technology and sensing.<br><br> I have a keen interest in wireless communications, radio frequency, and satellites.<br><br> I love working with people who are unafraid of a good challenge, fast-paced environment, and whiteboards.</p>
+    <div class="pub-card">
+      <div class="pub-meta">IEEE ORSS 2025 · Atlanta, GA · DOI: 10.1109/ORSS66051.2025.11121626</div>
+      <div class="pub-title">Semi-Passive RFID-Enabled Reconfigurable Antenna Array</div>
+      <p style="font-size: 0.9rem; color: #3b231488; font-weight: 300; margin: 0.6rem 0 0.9rem;">
+        F. S. Kovoor, N. K. Banerjee, <strong>V. H. Mok</strong>, K. X. McCollum, K. M. Graves and G. D. Durgin. 
+        Presented and published at the 2025 IEEE Opportunity Research Scholars Symposium.
+      </p>
+      <span class="pub-award">🏆 2nd Place Paper Award</span>
     </div>
-    <div class="bottom-section">
-        <h2>
-            Welcome to My Personal Engineering Portfolio!
-        </h2>
+
+    <div class="pub-card" style="border-left-color: var(--sage);">
+      <div class="pub-meta">Housley Lab · Ongoing Research · 2025 – Present</div>
+      <div class="pub-title">Wireless Power Transfer for Biomedical &amp; Optogenetic Systems</div>
+      <p style="font-size: 0.9rem; color: #3b231488; font-weight: 300; margin: 0.6rem 0;">
+        Developing wireless power delivery for optogenetic control of biological systems in cell culture environments and implantable medical devices. Paired with 2.5D microfabrication of vascular-on-chip models.
+      </p>
     </div>
-</div>
+  </section>
 
+  <!-- AWARDS -->
+  <section id="awards">
+    <div class="section-header">
+      <span class="section-number">04</span>
+      <h2 class="section-title">Awards</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="awards-grid">
 
-<p>
+      <div class="award-card">
+        <div class="award-year">2026</div>
+        <div class="award-title">UGA Next Top Entrepreneur — Top 11 Finalist</div>
+        <div class="award-desc">Selected to pitch company <em>Artea</em> live at the University of Georgia entrepreneurship competition.</div>
+      </div>
 
-</p>
-<script src="script.js"></script>
+      <div class="award-card">
+        <div class="award-year">2025</div>
+        <div class="award-title">2nd Place Paper Award — IEEE ORSS 2025</div>
+        <div class="award-desc">For "Semi-Passive RFID-Enabled Reconfigurable Antenna Array" at the IEEE Opportunity Research Scholars Symposium.</div>
+      </div>
 
-<div class="footer">
-    Made with ❤ by Veronica
-</div>
+      <div class="award-card">
+        <div class="award-year">2024</div>
+        <div class="award-title">Georgia Tech Women in Engineering Corporate Scholarship</div>
+        <div class="award-desc">Selective award based on academic excellence and involvement in women-focused professional organizations.</div>
+      </div>
 
+      <div class="award-card">
+        <div class="award-year">2023</div>
+        <div class="award-title">MathWorks M3C — Honorable Mention (Top 6%)</div>
+        <div class="award-desc">Modeled e-bike adoption growth and its effects on public health and the environment among 700+ international teams.</div>
+      </div>
+
+      <div class="award-card">
+        <div class="award-year">2023</div>
+        <div class="award-title">CyberStart America — National Cyber Scholarship Finalist</div>
+        <div class="award-desc">Ranked in the top 7% of eligible players in the US solving hands-on cybersecurity challenges.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="section-header">
+      <span class="section-number">05</span>
+      <h2 class="section-title">Skills</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="skills-grid">
+
+      <div class="skill-group">
+        <h3>Programming</h3>
+        <div class="skill-tags">
+          <span class="skill-tag">Python</span>
+          <span class="skill-tag">MATLAB</span>
+          <span class="skill-tag">Java</span>
+          <span class="skill-tag">C++</span>
+          <span class="skill-tag">VHDL</span>
+          <span class="skill-tag">x86 Assembly</span>
+          <span class="skill-tag">Visual Basic</span>
+        </div>
+      </div>
+
+      <div class="skill-group">
+        <h3>EDA &amp; Simulation</h3>
+        <div class="skill-tags">
+          <span class="skill-tag">Keysight ADS</span>
+          <span class="skill-tag">Ansys HFSS</span>
+          <span class="skill-tag">Altium</span>
+          <span class="skill-tag">KiCad</span>
+          <span class="skill-tag">Siemens Xpedition</span>
+          <span class="skill-tag">Eagle</span>
+          <span class="skill-tag">LTSpice</span>
+          <span class="skill-tag">Intel Quartus</span>
+          <span class="skill-tag">NI Multisim</span>
+        </div>
+      </div>
+
+      <div class="skill-group">
+        <h3>Hardware &amp; Lab</h3>
+        <div class="skill-tags">
+          <span class="skill-tag">PCB Design</span>
+          <span class="skill-tag">FPGA</span>
+          <span class="skill-tag">THT &amp; SMD Soldering</span>
+          <span class="skill-tag">Oscilloscope</span>
+          <span class="skill-tag">Network Analyzer</span>
+          <span class="skill-tag">ATE</span>
+          <span class="skill-tag">SEM</span>
+          <span class="skill-tag">Wire Harnessing</span>
+          <span class="skill-tag">Cleanroom</span>
+        </div>
+      </div>
+
+      <div class="skill-group">
+        <h3>Design &amp; Other</h3>
+        <div class="skill-tags">
+          <span class="skill-tag">Fusion 360</span>
+          <span class="skill-tag">Siemens NX</span>
+          <span class="skill-tag">Ansys STK</span>
+          <span class="skill-tag">AutoCAD</span>
+          <span class="skill-tag">NI LabVIEW</span>
+          <span class="skill-tag">IDA Pro</span>
+          <span class="skill-tag">GitHub</span>
+          <span class="skill-tag">3D Printing</span>
+          <span class="skill-tag">Laser Cutting</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER / CONTACT -->
+  <footer id="contact">
+    <div class="footer-name">Veronica Mok</div>
+    <div class="footer-sub">Electrical Engineer · Fort Lee, NJ</div>
+    <div class="contact-links">
+      <a href="mailto:vhymok@gmail.com">vhymok@gmail.com</a>
+      <a href="tel:5513132041">(551) 313-2041</a>
+      <a href="http://linkedin.com/in/mok-veronica" target="_blank">linkedin.com/in/mok-veronica</a>
+      <a href="https://ieeexplore.ieee.org/document/11121626" target="_blank">IEEE Publication</a>
+    </div>
+    <div class="footer-copy">© 2026 Veronica Mok · Portfolio</div>
+  </footer>
+
+  <script>
+    // Intersection Observer for timeline scroll animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) e.target.classList.add('visible');
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.timeline-item').forEach(el => observer.observe(el));
+  </script>
+
+</body>
 </html>
