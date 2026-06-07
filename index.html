@@ -86,19 +86,26 @@
     /* ── HERO ── */
     #hero {
       min-height: 100vh;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: block;
       overflow: hidden;
     }
 
     .hero-left {
       background: var(--bark);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: end;
+      gap: 3rem;
+      padding: 5rem 5rem 4rem;
+      min-height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-text-col {
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      padding: 5rem 4rem 4rem;
-      position: relative;
-      overflow: hidden;
     }
 
     .hero-left::before {
@@ -184,56 +191,199 @@
       color: var(--cream);
     }
 
-    .hero-right {
-      background: var(--parchment);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 6rem 4rem;
+    /* ── HEADSHOT (inside hero-left, right column) ── */
+    .headshot-wrap {
       position: relative;
+      align-self: end;
+      padding-bottom: 4rem;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.5s forwards;
+      flex-shrink: 0;
     }
 
-    .hero-right::before {
+    /* offset shadow block behind photo */
+    .headshot-wrap::before {
       content: '';
       position: absolute;
-      inset: 40px;
-      border: 1px solid rgba(181,97,58,0.15);
-      border-radius: 2px;
+      inset: -10px -8px -6px -14px;
+      background: var(--terracotta);
+      border-radius: 3px;
+      opacity: 0.22;
+      z-index: 0;
     }
 
-    .stat-grid {
+    .headshot-frame {
+      position: relative;
+      z-index: 1;
+      width: 220px;
+      aspect-ratio: 3 / 4;
+      border-radius: 3px;
+      overflow: hidden;
+      background: var(--sand);
+      box-shadow: 0 16px 48px rgba(30,18,9,0.35);
+      cursor: pointer;
+      border: 1px solid rgba(232,213,183,0.15);
+    }
+
+    .headshot-frame .ph-inner {
+      width: 100%; height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      background: linear-gradient(160deg, rgba(59,35,20,0.55) 0%, rgba(79,94,69,0.4) 100%);
+      transition: background 0.3s;
+    }
+    .headshot-frame:hover .ph-inner { background: linear-gradient(160deg, rgba(181,97,58,0.5) 0%, rgba(59,35,20,0.6) 100%); }
+
+    .headshot-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .ph-icon {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      border: 1.5px dashed rgba(232,213,183,0.4);
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .ph-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: rgba(232,213,183,0.5);
+      text-align: center;
+      line-height: 1.7;
+    }
+
+    .headshot-caption {
+      margin-top: 0.6rem;
+      text-align: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.1em;
+      color: rgba(200,131,91,0.6);
+    }
+
+    .headshot-upload { display: none; }
+
+    /* ── PHOTO PLACEHOLDER SHARED ── */
+    .ph {
+      width: 100%; height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      background: linear-gradient(145deg, #e8d5b7 0%, #f5ede0 100%);
+      transition: background 0.25s;
+      cursor: pointer;
+    }
+    .ph:hover { background: linear-gradient(145deg, #d4b896 0%, #e8d5b7 100%); }
+
+    .ph-icon {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1.5px dashed rgba(59,35,20,0.3);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ph-icon svg { opacity: 0.35; }
+
+    .ph-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(59,35,20,0.38);
+      text-align: center;
+      line-height: 1.8;
+    }
+
+    /* ── EXPERIENCE: portrait next to Housley ── */
+    /* Housley timeline item uses a two-col inner grid */
+    .housley-inner {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    .exp-portrait {
+      width: 140px;
+      aspect-ratio: 3 / 4;
+      transform: rotate(1.8deg);
+      border-radius: 3px;
+      overflow: hidden;
+      box-shadow: 0 10px 32px rgba(30,18,9,0.18);
+      flex-shrink: 0;
+      margin-top: 0.3rem;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .exp-portrait:hover {
+      transform: rotate(0.4deg) translateY(-3px);
+      box-shadow: 0 16px 40px rgba(30,18,9,0.24);
+    }
+
+    /* ── EXPERIENCE: landscape between Hive and YJSP ── */
+    .exp-landscape-wrap {
+      margin: 2rem 0 2rem 2.5rem;
+      max-width: 480px;
+      aspect-ratio: 16 / 9;
+      transform: rotate(-1.4deg);
+      border-radius: 3px;
+      overflow: hidden;
+      box-shadow: 0 10px 32px rgba(30,18,9,0.14);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .exp-landscape-wrap:hover {
+      transform: rotate(-0.3deg) translateY(-3px);
+      box-shadow: 0 16px 40px rgba(30,18,9,0.2);
+    }
+
+    /* ── AWARDS: side-by-side layout ── */
+    .awards-layout {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 2.5rem;
-      position: relative;
-      z-index: 1;
+      align-items: start;
     }
 
-    .stat-item {
-      text-align: center;
-      opacity: 0;
-      animation: fadeUp 0.8s forwards;
-    }
-    .stat-item:nth-child(1) { animation-delay: 0.5s; }
-    .stat-item:nth-child(2) { animation-delay: 0.7s; }
-    .stat-item:nth-child(3) { animation-delay: 0.9s; }
-    .stat-item:nth-child(4) { animation-delay: 1.1s; }
-
-    .stat-number {
-      font-family: 'Playfair Display', serif;
-      font-size: 3.5rem;
-      font-weight: 700;
-      color: var(--terracotta);
-      line-height: 1;
+    .awards-photo-col {
+      position: sticky;
+      top: 6rem;
     }
 
-    .stat-label {
+    .awards-photo-wrap {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 10px 36px rgba(30,18,9,0.32);
+      cursor: pointer;
+    }
+
+    .awards-photo-wrap .ph {
+      background: linear-gradient(135deg, rgba(59,35,20,0.58) 0%, rgba(79,94,69,0.48) 100%);
+    }
+    .awards-photo-wrap .ph .ph-badge { color: rgba(232,213,183,0.5); }
+    .awards-photo-wrap .ph .ph-icon { border-color: rgba(232,213,183,0.35); }
+    .awards-photo-wrap .ph .ph-icon svg { filter: invert(1); opacity: 0.4; }
+    .awards-photo-wrap .ph:hover { background: linear-gradient(135deg, rgba(59,35,20,0.48) 0%, rgba(79,94,69,0.38) 100%); }
+
+    .awards-photo-caption {
+      margin-top: 0.8rem;
       font-family: 'DM Mono', monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.15em;
+      font-size: 0.55rem;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--moss);
-      margin-top: 0.4rem;
+      color: rgba(232,213,183,0.35);
+      text-align: center;
+    }
+
+    .awards-cards-col .awards-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
     }
 
     /* ── SECTION COMMONS ── */
@@ -464,11 +614,8 @@
     #awards .section-number { color: var(--clay); }
     #awards .section-line { background: linear-gradient(to right, rgba(232,213,183,0.25), transparent); }
 
-    .awards-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1.5rem;
-    }
+    /* awards-grid is now a flex column inside awards-cards-col */
+    .awards-grid { display: flex; flex-direction: column; gap: 1.2rem; }
 
     .award-card {
       background: rgba(255,255,255,0.05);
@@ -609,9 +756,12 @@
 
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
-      #hero { grid-template-columns: 1fr; }
-      .hero-right { min-height: 320px; }
+      .hero-left { grid-template-columns: 1fr; padding: 5rem 2rem 3rem; }
+      .headshot-wrap { display: none; }
       .about-grid { grid-template-columns: 1fr; }
+      .awards-layout { grid-template-columns: 1fr; }
+      .awards-photo-col { position: static; }
+      .housley-inner { grid-template-columns: 1fr; }
       nav { padding: 1rem 1.5rem; }
       nav ul { gap: 1.2rem; }
       section { padding: 4rem 1.5rem; }
@@ -640,25 +790,38 @@
   <!-- HERO -->
   <section id="hero">
     <div class="hero-left">
-      <div class="hero-tag">Electrical Engineer · Researcher · Builder</div>
-      <h1 class="hero-name">
-        Veronica<em>Mok</em>
-      </h1>
-      <p class="hero-desc">
-        Georgia Tech EE student designing RF systems, rocket avionics, and biomedical devices. 
-        Incoming RF Design Engineering Intern at Boeing.
-      </p>
-      <div class="hero-links">
-        <a href="mailto:vhymok@gmail.com">Email</a>
-        <a href="http://linkedin.com/in/mok-veronica" target="_blank">LinkedIn</a>
-        <a href="https://ieeexplore.ieee.org/document/11121626" target="_blank">Publication</a>
-      </div>
-    </div>
-    <div class="hero-right">
-      <div class="stat-grid">
-        <div class="stat-item">
-          <img src="headshot.jpeg" width="500" height="600">
+      <!-- Text column -->
+      <div class="hero-text-col">
+        <div class="hero-tag">Electrical Engineer · Researcher · Builder</div>
+        <h1 class="hero-name">
+          Veronica<em>Mok</em>
+        </h1>
+        <p class="hero-desc">
+          Georgia Tech EE student designing RF systems, rocket avionics, and biomedical devices.
+          Incoming RF Design Engineering Intern at Boeing.
+        </p>
+        <div class="hero-links">
+          <a href="mailto:vhymok@gmail.com">Email</a>
+          <a href="http://linkedin.com/in/mok-veronica" target="_blank">LinkedIn</a>
+          <a href="https://ieeexplore.ieee.org/document/11121626" target="_blank">Publication</a>
         </div>
+      </div>
+      <!-- Headshot column -->
+      <input type="file" accept="image/*" class="headshot-upload" id="headshot-upload" />
+      <div class="headshot-wrap">
+        <div class="headshot-frame" id="headshot-frame"
+             onclick="document.getElementById('headshot-upload').click()"
+             title="Click to upload your headshot">
+          <div class="ph-inner" id="headshot-placeholder">
+            <div class="ph-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e8d5b7" stroke-width="1.5">
+                <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+              </svg>
+            </div>
+            <div class="ph-label">Headshot<br/>click to upload</div>
+          </div>
+        </div>
+        <div class="headshot-caption"><!-- src="headshot.jpg" --></div>
       </div>
     </div>
   </section>
@@ -726,10 +889,26 @@
           <div class="job-date">Aug 2025 – Present</div>
         </div>
         <div class="job-title">Undergraduate Research Assistant · Atlanta, GA</div>
-        <ul class="job-bullets">
-          <li>Developing scalable 2.5D microfabrication methods for complex vascular-on-chip models.</li>
-          <li>Designing wireless power transfer systems for optogenetic applications in cell culture and implantable devices.</li>
-        </ul>
+        <div class="housley-inner">
+          <ul class="job-bullets">
+            <li>Developing scalable 2.5D microfabrication methods for complex vascular-on-chip models.</li>
+            <li>Designing wireless power transfer systems for optogenetic applications in cell culture and implantable devices.</li>
+          </ul>
+          <!-- Portrait photo placeholder — replace ph div with <img src="lab-portrait.jpg"> -->
+          <input type="file" accept="image/*" id="exp-portrait-upload" style="display:none" />
+          <div class="exp-portrait" onclick="document.getElementById('exp-portrait-upload').click()" title="Click to upload">
+            <div class="ph" id="exp-portrait-ph">
+              <div class="ph-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b2314" stroke-width="1.5">
+                  <rect x="3" y="5" width="18" height="14" rx="2"/>
+                  <circle cx="8.5" cy="10.5" r="1.5"/>
+                  <path d="M21 15l-5-5L5 19"/>
+                </svg>
+              </div>
+              <div class="ph-badge">Portrait<br/><!-- src="lab.jpg" --></div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="timeline-item">
@@ -782,6 +961,21 @@
         </ul>
       </div>
 
+      <!-- Landscape photo between Hive and YJSP — replace ph div with <img src="hive-landscape.jpg"> -->
+      <input type="file" accept="image/*" id="exp-landscape-upload" style="display:none" />
+      <div class="exp-landscape-wrap" onclick="document.getElementById('exp-landscape-upload').click()" title="Click to upload">
+        <div class="ph" id="exp-landscape-ph">
+          <div class="ph-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b2314" stroke-width="1.5">
+              <rect x="3" y="5" width="18" height="14" rx="2"/>
+              <circle cx="8.5" cy="10.5" r="1.5"/>
+              <path d="M21 15l-5-5L5 19"/>
+            </svg>
+          </div>
+          <div class="ph-badge">Landscape · makerspace, lab, team shot<br/><!-- src="hive-landscape.jpg" --></div>
+        </div>
+      </div>
+
       <div class="timeline-item">
         <div class="job-header">
           <div class="job-company">Yellow Jacket Space Program</div>
@@ -832,36 +1026,62 @@
       <h2 class="section-title">Awards</h2>
       <div class="section-line"></div>
     </div>
-    <div class="awards-grid">
+    <div class="awards-layout">
 
-      <div class="award-card">
-        <div class="award-year">2026</div>
-        <div class="award-title">UGA Next Top Entrepreneur — Top 11 Finalist</div>
-        <div class="award-desc">Selected to pitch company <em>Artea</em> live at the University of Georgia entrepreneurship competition.</div>
+      <!-- Left: landscape photo -->
+      <div class="awards-photo-col">
+        <!-- Replace ph div with <img src="awards-photo.jpg" alt="..." style="width:100%;height:100%;object-fit:cover"> -->
+        <input type="file" accept="image/*" id="awards-landscape-upload" style="display:none" />
+        <div class="awards-photo-wrap" onclick="document.getElementById('awards-landscape-upload').click()" title="Click to upload">
+          <div class="ph" id="awards-landscape-ph">
+            <div class="ph-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e8d5b7" stroke-width="1.5">
+                <rect x="3" y="5" width="18" height="14" rx="2"/>
+                <circle cx="8.5" cy="10.5" r="1.5"/>
+                <path d="M21 15l-5-5L5 19"/>
+              </svg>
+            </div>
+            <div class="ph-badge">Landscape photo<br/>conference · ceremony · pitch<br/><!-- src="awards.jpg" --></div>
+          </div>
+        </div>
+        <div class="awards-photo-caption"><!-- src="awards-photo.jpg" --></div>
       </div>
 
-      <div class="award-card">
-        <div class="award-year">2025</div>
-        <div class="award-title">2nd Place Paper Award — IEEE ORSS 2025</div>
-        <div class="award-desc">For "Semi-Passive RFID-Enabled Reconfigurable Antenna Array" at the IEEE Opportunity Research Scholars Symposium.</div>
-      </div>
+      <!-- Right: award cards -->
+      <div class="awards-cards-col">
+        <div class="awards-grid">
 
-      <div class="award-card">
-        <div class="award-year">2024</div>
-        <div class="award-title">Georgia Tech Women in Engineering Corporate Scholarship</div>
-        <div class="award-desc">Selective award based on academic excellence and involvement in women-focused professional organizations.</div>
-      </div>
+          <div class="award-card">
+            <div class="award-year">2026</div>
+            <div class="award-title">UGA Next Top Entrepreneur — Top 11 Finalist</div>
+            <div class="award-desc">Selected to pitch company <em>Artea</em> live at the University of Georgia entrepreneurship competition.</div>
+          </div>
 
-      <div class="award-card">
-        <div class="award-year">2023</div>
-        <div class="award-title">MathWorks M3C — Honorable Mention (Top 6%)</div>
-        <div class="award-desc">Modeled e-bike adoption growth and its effects on public health and the environment among 700+ international teams.</div>
-      </div>
+          <div class="award-card">
+            <div class="award-year">2025</div>
+            <div class="award-title">2nd Place Paper Award — IEEE ORSS 2025</div>
+            <div class="award-desc">For "Semi-Passive RFID-Enabled Reconfigurable Antenna Array" at the IEEE Opportunity Research Scholars Symposium.</div>
+          </div>
 
-      <div class="award-card">
-        <div class="award-year">2023</div>
-        <div class="award-title">CyberStart America — National Cyber Scholarship Finalist</div>
-        <div class="award-desc">Ranked in the top 7% of eligible players in the US solving hands-on cybersecurity challenges.</div>
+          <div class="award-card">
+            <div class="award-year">2024</div>
+            <div class="award-title">Georgia Tech Women in Engineering Corporate Scholarship</div>
+            <div class="award-desc">Selective award based on academic excellence and involvement in women-focused professional organizations.</div>
+          </div>
+
+          <div class="award-card">
+            <div class="award-year">2023</div>
+            <div class="award-title">MathWorks M3C — Honorable Mention (Top 6%)</div>
+            <div class="award-desc">Modeled e-bike adoption growth and its effects on public health and the environment among 700+ international teams.</div>
+          </div>
+
+          <div class="award-card">
+            <div class="award-year">2023</div>
+            <div class="award-title">CyberStart America — National Cyber Scholarship Finalist</div>
+            <div class="award-desc">Ranked in the top 7% of eligible players in the US solving hands-on cybersecurity challenges.</div>
+          </div>
+
+        </div>
       </div>
 
     </div>
@@ -942,7 +1162,7 @@
     <div class="footer-name">Veronica Mok</div>
     <div class="footer-sub">Electrical Engineer · Fort Lee, NJ</div>
     <div class="contact-links">
-      <a href="mailto:vhymok@gmail.com">vhymok@gmail.com</a>
+      <a href="/cdn-cgi/l/email-protection#aed8c6d7c3c1c5eec9c3cfc7c280cdc1c3"><span class="__cf_email__" data-cfemail="b2c4dacbdfddd9f2d5dfd3dbde9cd1dddf">[email&#160;protected]</span></a>
       <a href="tel:5513132041">(551) 313-2041</a>
       <a href="http://linkedin.com/in/mok-veronica" target="_blank">linkedin.com/in/mok-veronica</a>
       <a href="https://ieeexplore.ieee.org/document/11121626" target="_blank">IEEE Publication</a>
@@ -959,7 +1179,33 @@
     }, { threshold: 0.15 });
 
     document.querySelectorAll('.timeline-item').forEach(el => observer.observe(el));
-  </script>
 
+    // ── Photo upload handlers ──
+    function bindUpload(inputId, phId) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      input.addEventListener('change', function () {
+        const file = this.files[0];
+        if (!file) return;
+        const url = URL.createObjectURL(file);
+        const ph = document.getElementById(phId);
+        if (!ph) return;
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = 'Photo';
+        img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+        ph.replaceWith(img);
+        if (inputId === 'headshot-upload') {
+          const cap = document.querySelector('.headshot-caption');
+          if (cap) cap.textContent = 'src="' + file.name + '"';
+        }
+      });
+    }
+
+    bindUpload('headshot-upload',        'headshot-placeholder');
+    bindUpload('exp-landscape-upload',   'exp-landscape-ph');
+    bindUpload('exp-portrait-upload',    'exp-portrait-ph');
+    bindUpload('awards-landscape-upload','awards-landscape-ph');
+  </script>
 </body>
 </html>
